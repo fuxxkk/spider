@@ -20,12 +20,23 @@ MySQL-Connector
 cx_Oracle
     oracle+cx_oracle://user:pass@host:port/dbname[?key=value&key=value...]
 '''
-engine = sqlalchemy.create_engine("mysql+pymysql://root:1234@localhost:3306/mydemo")
+engine = sqlalchemy.create_engine("mysql+pymysql://root:123456@23.234.53.46:3306/test")
 
 base = declarative_base()
 
 Session = sessionmaker(bind=engine)
 session = Session()
+
+
+def total_time(func):
+    def inner():
+        start_time = int(round(time.time() * 1000))
+        func()
+        end_time = int(round(time.time() * 1000))
+        total_time = end_time - start_time
+        print("finish...total time: %d ms" % total_time)
+
+    return inner
 
 
 # 创建单表对象
@@ -35,7 +46,11 @@ class UserInfo(base):
     username = Column(String(10))
     passwd = Column(String(10))
 
-#插入一条
+    def __str__(self):
+        return str(self.id)+","+self.username+","+self.passwd
+
+
+# 插入一条
 def insert(obj):
     start_time = int(round(time.time() * 1000))
     print("正插入到db..")
@@ -48,20 +63,27 @@ def insert(obj):
 
 userinfo1 = UserInfo(username="aaaa", passwd="123")
 
-#批量插入
-def branch_insert():
-    start_time = int(round(time.time() * 1000))
 
-    userinfos=[]
-    for i in  range(100):
-        userinfo = UserInfo(username="user"+str(i),passwd="pwd"+str(i))
+# 批量插入
+@total_time
+def branch_insert():
+    userinfos = []
+    for i in range(100):
+        userinfo = UserInfo(username="user" + str(i), passwd="pwd" + str(i))
         userinfos.append(userinfo)
     session.add_all(userinfos)
     session.commit()
-    end_time = int(round(time.time() * 1000))
-    total_time = end_time - start_time
-    print("finish...total time: %d ms" % total_time)
+
+#查询
+@total_time
+def select():
+    #list = session.query(UserInfo).filter(UserInfo.id.between(5, 600)).all()
+    list = session.query(UserInfo).all()
+
+    for userinfo in list:
+        print(userinfo)
 
 
-#insert(userinfo1)
-branch_insert()
+# insert(userinfo1)
+#branch_insert()
+select()
