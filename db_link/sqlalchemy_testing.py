@@ -47,7 +47,7 @@ class UserInfo(base):
     passwd = Column(String(10))
 
     def __str__(self):
-        return str(self.id)+","+self.username+","+self.passwd
+        return str(self.id) + "," + self.username + "," + self.passwd
 
 
 # 插入一条
@@ -74,16 +74,25 @@ def branch_insert():
     session.add_all(userinfos)
     session.commit()
 
-#查询
+
+# 查询
 @total_time
 def select():
-    #list = session.query(UserInfo).filter(UserInfo.id.between(5, 600)).all()
-    list = session.query(UserInfo).all()
+    list = session.query(UserInfo).filter(UserInfo.id == 305).all()
+    #list = session.query(UserInfo).all()
 
     for userinfo in list:
         print(userinfo)
 
 
+# 改
+@total_time
+def update():
+    session.query(UserInfo).filter(UserInfo.id == 305).update({"username": "test-test"})
+    session.commit()
+
+
 # insert(userinfo1)
-#branch_insert()
+# branch_insert()
 select()
+#update()
