@@ -24,5 +24,5 @@ class ItcastSpider(scrapy.Spider):
             item['title'] = title[0]
             item['info'] = info[0]
 
-            items.append(item)
-        return items
+            #items.append(item)
+            yield item

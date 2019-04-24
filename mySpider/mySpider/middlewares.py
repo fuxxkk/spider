@@ -4,9 +4,10 @@
 #
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
+import random
 
 from scrapy import signals
-
+from mySpider.settings import USER_AGENTS
 
 class MyspiderSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -78,7 +79,10 @@ class MyspiderDownloaderMiddleware(object):
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
-        return None
+        useragent = random.choice(USER_AGENTS)
+
+        request.headers.setdefault("User-Agent", useragent)
+        return request
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
