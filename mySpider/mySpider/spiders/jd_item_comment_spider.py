@@ -17,13 +17,16 @@ class Jd_item_comment_spider(scrapy.Spider):
         print("=======title===========", title)
         item['title'] = title
         item['jD_comment_info'] = []
-
+        item['is_write'] = False
+        page = 0
         while True:
-            page = 0
             request = scrapy.Request(url=COMMENT_URL % (self.item_id, page), callback=self.parse_comment,
                                      meta={'item': item})
-            page += 1
+            page = page + 1
+
             yield request
+            if item['is_write']:
+                break
 
     def parse_comment(self, response):
         print("*" * 50)
@@ -33,21 +36,24 @@ class Jd_item_comment_spider(scrapy.Spider):
         json = self.parse_to_json(text)
         comments = json.get('comments')
 
-        for comment in comments:
-            content = comment.get('content')
-            name = comment.get("nickname")
-            date = comment.get('creationTime')
-            score = comment.get('score')
-            order_info = comment.get('productColor') + " " + comment.get('productSize')
-            info = JD_comment_info()
-            info['username'] = name
-            info['comment'] = content
-            info['order_date'] = date
-            info['score'] = score
-            info['order_info'] = order_info
-            infos.append(info)
+        if comments is not None and len(comments) == 10:
+            for comment in comments:
+                content = comment.get('content')
+                name = comment.get("nickname")
+                date = comment.get('creationTime')
+                score = comment.get('score')
+                order_info = comment.get('productColor') + " " + comment.get('productSize')
+                info = JD_comment_info()
+                info['username'] = name
+                info['comment'] = content
+                info['order_date'] = date
+                info['score'] = score
+                info['order_info'] = order_info
+                infos.append(info)
 
-        item['jD_comment_info'] = infos
+            item['jD_comment_info'] = infos
+        else:
+            item['is_write'] = True
         # item = JD_item()
         yield item
 
