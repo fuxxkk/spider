@@ -77,7 +77,7 @@ ROBOTSTXT_OBEY = True
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    #'mySpider.pipelines.MyspiderPipeline': 300,
-    #"mySpider.pipelines.ItcastPipeline":300
+    "mySpider.pipelines.JdItemPipeline":300
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -102,3 +102,5 @@ ITEM_PIPELINES = {
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 #LOG_LEVEL='DEBUG'
+
+COMMENT_URL = 'http://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv89&productId=%d&score=0&sortType=5&page=%d&pageSize=10&isShadowSku=0&fold=1'
