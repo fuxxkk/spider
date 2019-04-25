@@ -8,6 +8,8 @@ import random
 
 from scrapy import signals
 from mySpider.settings import USER_AGENTS
+from mySpider.settings import PROXIES
+
 
 class MyspiderSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -50,12 +52,22 @@ class MyspiderSpiderMiddleware(object):
         # that it doesn’t have a response associated.
 
         # Must return only requests (not items).
-        for r in start_requests:
-            yield r
+        for request in start_requests:
+            print("run my middleware")
+            #set useragent
+            useragent = random.choice(USER_AGENTS)
+            request.headers.setdefault("User-Agent", useragent)
+
+            proxy = random.choice(PROXIES)
+            port_ = proxy['ip_port']
+            request.meta['proxy'] = 'http://' + port_
+
+            print("ip_port",port_,"request",request)
+
+            yield request
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
-
 
 class MyspiderDownloaderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -76,12 +88,10 @@ class MyspiderDownloaderMiddleware(object):
         # Must either:
         # - return None: continue processing this request
         # - or return a Response object
-        # - or return a Request object
+        # - or return a Reuest object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
-        useragent = random.choice(USER_AGENTS)
 
-        request.headers.setdefault("User-Agent", useragent)
         return request
 
     def process_response(self, request, response, spider):

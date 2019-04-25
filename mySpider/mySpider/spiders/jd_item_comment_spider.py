@@ -19,14 +19,16 @@ class Jd_item_comment_spider(scrapy.Spider):
         item['jD_comment_info'] = []
         item['is_write'] = False
         page = 0
-        while True:
-            request = scrapy.Request(url=COMMENT_URL % (self.item_id, page), callback=self.parse_comment,
-                                     meta={'item': item})
-            page = page + 1
-
-            yield request
-            if item['is_write']:
-                break
+        request = scrapy.Request(url=COMMENT_URL % (self.item_id, page), callback=self.parse_comment,
+                                 meta={'item': item})
+        # while True:
+        #     request = scrapy.Request(url=COMMENT_URL % (self.item_id, page), callback=self.parse_comment,
+        #                              meta={'item': item})
+        #     page = page + 1
+        #
+        yield request
+        #     if item['is_write']:
+        #         break
 
     def parse_comment(self, response):
         print("*" * 50)
@@ -52,6 +54,7 @@ class Jd_item_comment_spider(scrapy.Spider):
                 infos.append(info)
 
             item['jD_comment_info'] = infos
+            #print("infos length:",len(infos))
         else:
             item['is_write'] = True
         # item = JD_item()

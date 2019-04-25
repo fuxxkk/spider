@@ -47,5 +47,5 @@ class Jd_item_encoding(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, JD_comment_info):
             return "{username:%s,score:%d,order_info:%s,order_date:%s,comment:%s}" % (
-            o['username'], o['score'], o['order_info'], o['order_date'], o['comment'])
+                o['username'], o['score'], o['order_info'], o['order_date'], o['comment'])
         return json.JSONEncoder.default(self, o)
