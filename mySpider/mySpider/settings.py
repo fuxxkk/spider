@@ -60,7 +60,7 @@ ROBOTSTXT_OBEY = True
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 SPIDER_MIDDLEWARES = {
-   'mySpider.middlewares.MyspiderSpiderMiddleware': 2,
+   #'mySpider.middlewares.MyspiderSpiderMiddleware': 2,
 }
 
 # Enable or disable downloader middlewares
@@ -105,4 +105,4 @@ ITEM_PIPELINES = {
 
 # LOG_LEVEL='DEBUG'
 
-COMMENT_URL = 'https://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv92&productId=%d&score=0&sortType=5&page=%d&pageSize=10&isShadowSku=0&fold=1'
+COMMENT_URL = 'https://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv148&productId=%d&score=0&sortType=5&page=%d&pageSize=10&isShadowSku=0&fold=1'

@@ -21,7 +21,7 @@ class ItcastItem(scrapy.Item):
 
 
 class JD_item(scrapy.Item):
-    is_write = scrapy.Field()
+    #is_write = scrapy.Field()
     title = scrapy.Field()  # 标题
     jD_comment_info = scrapy.Field()  # 评论信息
 

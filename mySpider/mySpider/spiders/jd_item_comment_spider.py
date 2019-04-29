@@ -9,7 +9,8 @@ class Jd_item_comment_spider(scrapy.Spider):
     name = "jd_spider"
     allowed_domains = ['item.jd.com', 'sclub.jd.com']
     item_id = 6138112
-    start_urls = ["http://item.jd.com/%d.html" % (item_id)]
+    start_url = "http://item.jd.com/%d.html" % (item_id)
+    start_urls = [start_url]
 
     def parse(self, response):
         item = JD_item()
@@ -17,10 +18,21 @@ class Jd_item_comment_spider(scrapy.Spider):
         print("=======title===========", title)
         item['title'] = title
         item['jD_comment_info'] = []
-        item['is_write'] = False
         page = 0
-        request = scrapy.Request(url=COMMENT_URL % (self.item_id, page), callback=self.parse_comment,
-                                 meta={'item': item})
+        request_url = COMMENT_URL % (self.item_id, page)
+
+        #------headers------
+        headers = {
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip,deflate",
+            "Accept-Language": "zh-cn",
+            "Connection": "keep-alive",
+            #"Content-Type": " application/x-www-form-urlencoded; charset=UTF-8",
+            "User-Agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 2.0.50727; Media Center PC 6.0)",
+            "Referer": self.start_url
+        }
+        request = scrapy.Request(url=request_url, callback=self.parse_comment,
+                                 meta={'item': item},headers=headers)
         # while True:
         #     request = scrapy.Request(url=COMMENT_URL % (self.item_id, page), callback=self.parse_comment,
         #                              meta={'item': item})
@@ -37,6 +49,11 @@ class Jd_item_comment_spider(scrapy.Spider):
         text = response.text
         json = self.parse_to_json(text)
         comments = json.get('comments')
+
+        try:
+            comments = json.get('comments')
+        except Exception as e:
+            yield None
 
         if comments is not None and len(comments) == 10:
             for comment in comments:
@@ -62,7 +79,7 @@ class Jd_item_comment_spider(scrapy.Spider):
 
     def parse_to_json(self, str):
 
-        str = str.replace('fetchJSON_comment98vv89(', '').replace(");", "")
+        str = str.replace('fetchJSON_comment98vv148(', '').replace(");", "")
         # open("jd_item_comment.txt","w").write(str)
         result = json.loads(str)
         return result

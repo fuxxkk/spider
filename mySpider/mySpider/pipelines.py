@@ -34,9 +34,8 @@ class JdItemPipeline(object):
         self.json_file = open("items.json", "w")
 
     def process_item(self, item, spider):
-        if item['is_write']:
-            item_json = json.dumps(dict(item), ensure_ascii=False, cls=Jd_item_encoding) + "\n"
-            self.json_file.write(item_json)
+        item_json = json.dumps(dict(item), ensure_ascii=False, cls=Jd_item_encoding) + "\n"
+        self.json_file.write(item_json)
         return item
 
     def close_spider(self, spider):
