@@ -21,41 +21,33 @@ class Jd_item_comment_spider(scrapy.Spider):
         page = 0
         request_url = COMMENT_URL % (self.item_id, page)
 
-        #------headers------
+        # ------headers------
         headers = {
             "Accept": "*/*",
             "Accept-Encoding": "gzip,deflate",
             "Accept-Language": "zh-cn",
             "Connection": "keep-alive",
-            #"Content-Type": " application/x-www-form-urlencoded; charset=UTF-8",
+            # "Content-Type": " application/x-www-form-urlencoded; charset=UTF-8",
             "User-Agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 2.0.50727; Media Center PC 6.0)",
             "Referer": self.start_url
         }
-        request = scrapy.Request(url=request_url, callback=self.parse_comment,
-                                 meta={'item': item},headers=headers)
-        # while True:
-        #     request = scrapy.Request(url=COMMENT_URL % (self.item_id, page), callback=self.parse_comment,
-        #                              meta={'item': item})
-        #     page = page + 1
-        #
-        yield request
-        #     if item['is_write']:
-        #         break
+        while True:
+            request = scrapy.Request(url=COMMENT_URL % (self.item_id, page), callback=self.parse_comment,
+                                     meta={'item': item}, headers=headers)
+            page = page + 1
+
+            yield request
 
     def parse_comment(self, response):
         print("*" * 50)
         item = response.meta['item']
         infos = item['jD_comment_info']
         text = response.text
-        json = self.parse_to_json(text)
-        comments = json.get('comments')
+
 
         try:
+            json = self.parse_to_json(text)
             comments = json.get('comments')
-        except Exception as e:
-            yield None
-
-        if comments is not None and len(comments) == 10:
             for comment in comments:
                 content = comment.get('content')
                 name = comment.get("nickname")
@@ -71,15 +63,15 @@ class Jd_item_comment_spider(scrapy.Spider):
                 infos.append(info)
 
             item['jD_comment_info'] = infos
-            #print("infos length:",len(infos))
-        else:
-            item['is_write'] = True
-        # item = JD_item()
-        yield item
+            # print("infos length:",len(infos))
+            # item = JD_item()
+            yield item
+        except Exception as e:
+            yield None
 
     def parse_to_json(self, str):
 
-        str = str.replace('fetchJSON_comment98vv148(', '').replace(");", "")
+        str = str.replace('fetchJSON_comment98vv155(', '').replace(");", "")
         # open("jd_item_comment.txt","w").write(str)
         result = json.loads(str)
         return result

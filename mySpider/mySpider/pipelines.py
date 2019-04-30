@@ -34,6 +34,9 @@ class JdItemPipeline(object):
         self.json_file = open("items.json", "w")
 
     def process_item(self, item, spider):
+        if item is None:
+            spider.crawler.engine.close_spider(spider, "======爬取完成======")
+            return item
         item_json = json.dumps(dict(item), ensure_ascii=False, cls=Jd_item_encoding) + "\n"
         self.json_file.write(item_json)
         return item
@@ -45,6 +48,6 @@ class JdItemPipeline(object):
 class Jd_item_encoding(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, JD_comment_info):
-            return "{username:%s,score:%d,order_info:%s,order_date:%s,comment:%s}" % (
+            return "{username:%s,score:%d,order_info:%s,order_date:%s,comment:%s}\n" % (
                 o['username'], o['score'], o['order_info'], o['order_date'], o['comment'])
         return json.JSONEncoder.default(self, o)
