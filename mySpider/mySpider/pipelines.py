@@ -5,7 +5,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import json
-from mySpider.items import JD_comment_info
+from mySpider.items import JD_comment_info,JD_item
 
 
 class MyspiderPipeline(object):
@@ -30,15 +30,17 @@ class ItcastPipeline(object):
 
 
 class JdItemPipeline(object):
+    item = JD_item()
     def __init__(self):
         self.json_file = open("items.json", "w")
 
     def process_item(self, item, spider):
+
         if item is None:
-            spider.crawler.engine.close_spider(spider, "======爬取完成======")
-            return item
-        item_json = json.dumps(dict(item), ensure_ascii=False, cls=Jd_item_encoding) + "\n"
-        self.json_file.write(item_json)
+            item_json = json.dumps(dict(self.item), ensure_ascii=False, cls=Jd_item_encoding) + "\n"
+            self.json_file.write(item_json)
+        else:
+            self.item = item
         return item
 
     def close_spider(self, spider):

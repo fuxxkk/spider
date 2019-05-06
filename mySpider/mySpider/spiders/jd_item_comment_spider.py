@@ -68,10 +68,11 @@ class Jd_item_comment_spider(scrapy.Spider):
             yield item
         except Exception as e:
             yield None
+            self.crawler.engine.close_spider(self, '关闭爬虫')
 
     def parse_to_json(self, str):
 
-        str = str.replace('fetchJSON_comment98vv155(', '').replace(");", "")
+        str = str.replace('fetchJSON_comment98vv262(', '').replace(");", "")
         # open("jd_item_comment.txt","w").write(str)
         result = json.loads(str)
         return result
