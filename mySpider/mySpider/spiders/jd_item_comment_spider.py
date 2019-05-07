@@ -6,9 +6,10 @@ from mySpider.settings import COMMENT_URL
 
 
 class Jd_item_comment_spider(scrapy.Spider):
+    infos = []
     name = "jd_spider"
     allowed_domains = ['item.jd.com', 'sclub.jd.com']
-    item_id = 6138112
+    item_id = 6138114
     start_url = "http://item.jd.com/%d.html" % (item_id)
     start_urls = [start_url]
 
@@ -41,7 +42,7 @@ class Jd_item_comment_spider(scrapy.Spider):
     def parse_comment(self, response):
         print("*" * 50)
         item = response.meta['item']
-        infos = item['jD_comment_info']
+        #infos = item['jD_comment_info']
         text = response.text
 
 
@@ -60,14 +61,16 @@ class Jd_item_comment_spider(scrapy.Spider):
                 info['order_date'] = date
                 info['score'] = score
                 info['order_info'] = order_info
-                infos.append(info)
+                self.infos.append(info)
 
-            item['jD_comment_info'] = infos
+            item['jD_comment_info'] = self.infos
             # print("infos length:",len(infos))
             # item = JD_item()
             yield item
         except Exception as e:
-            yield None
+            item = JD_item()
+            item['title'] = "stop"
+            yield item
             self.crawler.engine.close_spider(self, '关闭爬虫')
 
     def parse_to_json(self, str):

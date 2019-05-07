@@ -35,16 +35,18 @@ class JdItemPipeline(object):
         self.json_file = open("items.json", "w")
 
     def process_item(self, item, spider):
-
-        if item is None:
+        if item['title'] == 'stop':
+            print("=" * 100)
             item_json = json.dumps(dict(self.item), ensure_ascii=False, cls=Jd_item_encoding) + "\n"
             self.json_file.write(item_json)
+            self.json_file.close()
         else:
             self.item = item
         return item
 
     def close_spider(self, spider):
-        self.json_file.close()
+        #self.json_file.close()
+        pass
 
 
 class Jd_item_encoding(json.JSONEncoder):
